@@ -296,6 +296,10 @@
 .moon{position:absolute;top:20px;right:36px;width:30px;height:30px;border-radius:50%;background:#EFE9D6;
   box-shadow:8px -3px 0 0 #0B1442 inset;}
 
+/* ---------- Footer mínimo (landing sin módulos aún) ---------- */
+.cs-footer-grid{grid-template-columns:auto 1fr;justify-content:space-between;}
+@media (max-width:520px){.cs-footer-grid{grid-template-columns:1fr;}}
+
 /* ---------- Responsivo ---------- */
 @media (max-width:640px){
   .cs-scene{height:380px;}

@@ -1,102 +1,62 @@
-# Desplegar PRODUCTION en Azure App Service
+# Desplegar PRODUCTION en Azure Static Web Apps
 
-Pasos manuales (una sola vez). Requieren el portal de Azure o `az` CLI en una máquina que
-lo tenga instalado — no está disponible en este entorno de desarrollo.
+Pasos manuales (una sola vez), en el portal de Azure — no hay `az` CLI disponible en este
+entorno de desarrollo. Misma familia de servicio que `A - API/NCTE`
+(`community.centrocultural.cr` en vez de `ncte.centrocultural.cr`).
 
-## 1. Base de datos (Postgres)
+## 1. Crear el Static Web App
 
-**Pendiente decidir** (ver `ARQUITECTURA.md` §8): Azure Database for PostgreSQL Flexible
-Server, o reusar el mismo proyecto Supabase que beta con una base separada. Cualquiera
-de las dos sirve — el esquema es portable (SQLAlchemy Core, sin nada específico de
-dialecto fuera de los bloques marcados en `api/db.py`). Con Azure Flexible Server:
+Azure Portal → **Create a resource → Static Web App**:
 
-```bash
-az postgres flexible-server create \
-  --resource-group cccn-rg \
-  --name cccn-community-db \
-  --location eastus \
-  --admin-user cccnadmin \
-  --admin-password '<generar-uno-fuerte>' \
-  --sku-name Standard_B1ms \
-  --tier Burstable \
-  --version 16 \
-  --storage-size 32
-az postgres flexible-server db create --resource-group cccn-rg \
-  --server-name cccn-community-db --database-name hub
-```
+- **Nombre:** `cccn-community` (o el que prefieras).
+- **Plan:** Free (alcanza de sobra para un landing estático).
+- **Deployment source:** GitHub → autorizar → repo `jabib-h/CCCN_Community_PRODUCTION`,
+  rama `main`.
+- **Build details:**
+  - Build presets: `Custom`
+  - App location: `/web`
+  - Api location: *(vacío — no hay backend)*
+  - Output location: *(vacío — sin build)*
 
-Anotar el connection string para el paso 3. `sslmode=require` siempre.
+Al crear el recurso, Azure genera automáticamente el workflow de GitHub Actions
+(`.github/workflows/azure-static-web-apps-<nombre>.yml`) y el secreto
+`AZURE_STATIC_WEB_APPS_API_TOKEN` en el repo — no hace falta escribirlos a mano (así
+funciona también NCTE). Cada push a `main` despliega solo.
 
-## 2. App Service
+## 2. Verificar el primer deploy
+
+El workflow tarda 2–4 minutos. Confirmar:
 
 ```bash
-az appservice plan create --resource-group cccn-rg --name cccn-community-plan \
-  --sku B1 --is-linux
-az webapp create --resource-group cccn-rg --plan cccn-community-plan \
-  --name cccn-community --runtime "PYTHON:3.12"
+curl -sI https://<nombre-generado>.azurestaticapps.net/
 ```
 
-**Configuration → General settings → Startup Command:**
+Debe traer `Content-Security-Policy` sin `unsafe-inline`, `Strict-Transport-Security`,
+`X-Frame-Options: DENY` (vienen de `staticwebapp.config.json`, no hace falta configurarlos
+en el portal).
 
-```
-uvicorn api.main:app --host 0.0.0.0 --port 8000
-```
+## 3. Dominio propio
 
-*(un solo worker uvicorn — suficiente para una instancia B1; si el tráfico lo exige,
-escalar con más instancias del App Service en vez de multi-proceso local, para no
-reintroducir estado en memoria — ver la nota de `rate_limiter` en
-`api/security.py`.)*
+**Static Web App → Custom domains → + Add** → `community.centrocultural.cr` → Azure pide
+un registro `TXT` (validación) y luego `CNAME` (o `ALIAS`/`ANAME` si el registrador de
+`centrocultural.cr` no soporta CNAME en la raíz) apuntando al hostname
+`*.azurestaticapps.net` del recurso. El certificado TLS lo emite y renueva Azure solo, sin
+pasos extra, una vez el DNS resuelve.
 
-## 3. Variables de entorno y secretos
+## 4. Promoción desde BETA
 
-**Configuration → Application settings** (o Key Vault + referencias `@Microsoft.KeyVault(...)`
-para los secretos — recomendado, ver Panorama Legal Paso 1). Cargar todo lo listado en
-`.env.example`, en particular:
-
-- `HUB_ENV=production`
-- `HUB_BASE_URL=https://community.centrocultural.cr`
-- `HUB_DATABASE_URL` (paso 1, con `+psycopg` en el esquema)
-- `HUB_JWT_SECRET`, `HUB_SESSION_SECRET` — generar con
-  `python -c "import secrets; print(secrets.token_urlsafe(48))"`, uno **distinto** para
-  cada variable, nunca reusar los de beta.
-
-## 4. CI/CD (GitHub Actions)
-
-`.github/workflows/deploy-azure.yml` ya está en el repo: corre `smoke_tests.py` y, si
-pasan, despliega a Azure con `azure/webapps-deploy` en cada push a `main`.
-
-1. **Azure Portal → App Service → Get publish profile** (o
-   `az webapp deployment list-publishing-profiles --xml`).
-2. En GitHub: **Settings → Secrets and variables → Actions** →
-   `AZURE_WEBAPP_PUBLISH_PROFILE` con ese contenido.
-3. Ajustar `env.AZURE_WEBAPP_NAME` en el workflow si el nombre del App Service es
-   distinto de `cccn-community`.
-
-## 5. Dominio propio
-
-**App Service → Custom domains** → agregar `community.centrocultural.cr` → seguir la
-verificación TXT/CNAME que pide Azure → apuntar el DNS del dominio (registrador de
-`centrocultural.cr`) al hostname `*.azurewebsites.net` del App Service. Activar
-**TLS/SSL → App Service Managed Certificate** (gratis, autorrenovable) una vez el DNS
-resuelva.
-
-## 6. Verificación post-deploy
-
-- `https://community.centrocultural.cr/health` → `{"status":"ok","env":"production"}`.
-- Cabeceras: `curl -sI https://community.centrocultural.cr/` debe traer
-  `Strict-Transport-Security`, `Content-Security-Policy` sin `unsafe-inline`, `nosniff`.
-- Crear la primera cuenta administradora (ver `README.md`).
-
-## 7. Promoción desde BETA
-
-Este repo no recibe cambios de diseño directos — se promueven desde
-[`CCCN_Community_BETA`](https://github.com/jabib-h/CCCN_Community_BETA) una vez
-validados ahí:
+Este repo no recibe cambios de diseño ni módulos nuevos directamente — se promueven desde
+[`CCCN_Community_BETA`](https://github.com/jabib-h/CCCN_Community_BETA) uno por uno,
+cuando estén listos para el público (ver `CLAUDE.md`):
 
 ```bash
 git remote add beta https://github.com/jabib-h/CCCN_Community_BETA.git
 git fetch beta main
-git merge beta/main
-python -m api.smoke_tests
-git push origin main        # dispara el workflow de deploy
+git checkout beta/main -- <ruta-del-módulo-a-promover>
+git push origin main        # dispara el deploy automático
 ```
+
+Si el módulo que se promueve trae backend (por ejemplo, cuando el Hub completo pase a
+producción), ese es el momento de decidir Static Web Apps + Functions vs. un servicio
+aparte (App Service/Container Apps) — no antes. Esa decisión se documenta en este archivo
+cuando se tome.

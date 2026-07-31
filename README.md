@@ -1,92 +1,52 @@
 # CCCN Community (PRODUCTION)
 
-Plataforma única del Centro Cultural Costarricense Norteamericano en
-**community.centrocultural.cr** (Azure App Service). Reúne bajo una sola cuenta, una sola
-base de datos y un solo control de permisos:
+Landing "próximamente" de **community.centrocultural.cr**. Sitio 100% estático — sin
+backend, sin base de datos, sin build — pensado para desplegarse en **Azure Static Web
+Apps** con la misma estructura que `A - API/NCTE` (`staticwebapp.config.json`, cabeceras
+de seguridad, sin GitHub Action escrita a mano: Azure la genera al conectar el repo).
 
-| Módulo | Qué es | Estado |
-|---|---|---|
-| **Community of Practice** | Charlas, vlogs, conferencias y talleres de la comunidad docente | En construcción |
-| **Revista Académica** | Publicación indexada sobre enseñanza del inglés: artículos, blogs, podcast | En construcción |
-| **Biblioteca Digital** | Catálogo de libros y audiolibros en OverDrive | Activo (enlace controlado por membresía) |
-| **Credenciales e Insignias** | Open Badges firmados y verificables | En construcción — ver [migración](docs/MIGRACION_BADGES.md) |
-| **Biblioteca y Espacios** | Acervo físico, préstamos y reserva de salas | En construcción |
+## Por qué este repo está tan vacío
 
-## Este repo es PRODUCTION, no BETA
-
-Este código se prueba primero en
-[`CCCN_Community_BETA`](https://github.com/jabib-h/CCCN_Community_BETA) (Vercel +
-Supabase) y se promueve aquí manualmente — nunca al revés. Ver
-`docs/DEPLOY_AZURE.md` §4 (promoción) antes de mezclar cambios directamente en este
-repo. Ningún cambio de diseño o esquema entra aquí sin haber pasado por beta.
-
-## Correr en local
-
-```bash
-pip install -r requirements.txt
-python run.py                    # http://localhost:8700
-```
-
-Sin configuración, arranca con SQLite en `data/hub_dev.db` y genera sus secretos en
-`data/state/` (ambos ignorados por git). Para configurar algo, copiá `.env.example` a
-`.env`. **Nunca** correr con `HUB_ENV=production` en local: ese modo exige Postgres y
-secretos por entorno (ver `api/config.py`).
-
-## Verificar
-
-```bash
-python -m compileall -q api      # sintaxis
-python -m api.smoke_tests        # 29 pruebas de regresión (SQLite temporal, no toca la BD real)
-```
+Este es literalmente **todo lo que necesita el landing inicial**. La plataforma completa
+(FastAPI + Postgres, comunidad de práctica, revista, biblioteca, credenciales) vive y se
+prueba en [`CCCN_Community_BETA`](https://github.com/jabib-h/CCCN_Community_BETA) y **no
+se trae para acá todavía**. Cuando un módulo esté listo para producción, se promueve
+explícitamente (ver `docs/DEPLOY_AZURE.md` §4) — hasta entonces este repo se mantiene
+mínimo a propósito, no por descuido.
 
 ## Estructura
 
 ```
 CCCN_Community_PRODUCTION/
-├── run.py                  Entrada de desarrollo
-├── ARQUITECTURA.md         Las decisiones y su razón — leer antes de cambiar diseño
-├── CLAUDE.md               Reglas de desarrollo — leer antes de tocar código
-├── .env.example            Todas las variables de entorno documentadas (Azure App Settings + Key Vault)
-├── .github/workflows/      CI: pruebas + deploy a Azure App Service en push a main
-│
-├── api/                    BACKEND — solo Python, cero assets
-│   ├── main.py             App, cabeceras de seguridad, montaje de web/
-│   ├── config.py           Entorno; fuera de "dev" falla si falta un secreto
-│   ├── db.py                Esquema único + triggers append-only + rate_limit_hits
-│   ├── security.py         Argon2 · JWT · rate limiter (tabla en BD, no memoria)
-│   ├── auth.py              RBAC y acceso por módulo (rol SOLO del servidor)
-│   ├── modules.py           Catálogo de módulos y su regla de acceso
-│   ├── smoke_tests.py       Regresión (python -m api.smoke_tests)
-│   └── routers/              auth_routes · hub
-│
-├── web/                    FRONTEND — vanilla, sin build, servido por la API en /app
-│   ├── index.html          Landing pública
-│   ├── acceso.html         Ingreso y registro con consentimiento informado
-│   ├── hub.html             Portada autenticada
-│   ├── legal/               privacidad · terminos · cookies · arco  (BORRADOR)
-│   └── shared/               FUENTE ÚNICA DE MARCA: ds/ (tokens + Raleway autoalojada),
-│                             img/, api.js, ui.js, app.css, hub.css, public.css
-│
-├── docs/                   MIGRACION_BADGES.md · DEPLOY_AZURE.md
-└── data/     ⊘ gitignored  BD de desarrollo, secretos locales
+├── staticwebapp.config.json   Cabeceras de seguridad + fallback de rutas (Azure SWA)
+├── docs/DEPLOY_AZURE.md       Cómo crear el Static Web App y apuntar el dominio
+└── web/                       Todo el sitio — carpeta raíz de la app en Azure SWA
+    ├── index.html             Landing: logo, mensaje "próximamente", obra en construcción
+    ├── coming-soon.css        Estilos de la landing y de las escenas animadas
+    ├── coming-soon.js         Escenas de personajes (datos) + diálogo al hacer click
+    └── shared/
+        ├── img/                logo.png, logo-white.png
+        └── ds/                 FUENTE ÚNICA DE MARCA: tokens, tipografía autoalojada, componentes
 ```
 
-## Cumplimiento
+## Ver en local
 
-Construido contra `../Panorama Legal/manual-cumplimiento-regulatorio.md` (Ley N.º 8968,
-PRODHAB) y las prácticas de `../Project Guard/`. Lo que ya está aplicado y verificado
-por las pruebas:
+Cualquier servidor estático sirve. Por ejemplo:
 
-- Consentimiento expreso y no preseleccionado antes de crear la cuenta (art. 5).
-- Autorregistro de personas menores de edad bloqueado (art. 196 bis Código Penal).
-- Bitácora `audit_log` append-only forzada por *triggers* de base de datos.
-- Canal ARCO público (no exige tener cuenta para ejercer un derecho).
-- Rol y alcance resueltos siempre en el servidor; nunca desde el cliente.
-- Consultas exclusivamente parametrizadas (SQLAlchemy Core).
-- CSP estricta sin `unsafe-inline`, HSTS en producción, secretos solo por entorno.
-- Errores de autenticación genéricos y bloqueo temporal tras 5 intentos fallidos.
-- Rate limiting por IP en tabla de base de datos (soporta múltiples instancias/regiones).
+```bash
+python -m http.server 8080 --directory web
+```
 
-**Los documentos de `web/legal/` están marcados BORRADOR** y deben ser aprobados por la
-Dirección y la asesoría legal antes de salir a producción: el consentimiento se recoge
-contra ellos.
+Abrir `http://localhost:8080/`.
+
+## Reglas al tocar este sitio
+
+- **Cero `style=""` y cero `<script>`/`<style>` inline.** La CSP de
+  `staticwebapp.config.json` no tiene `unsafe-inline`. Si necesitás algo dinámico, hacelo
+  por CSSOM desde `.js` (`elemento.style.propiedad = ...`), nunca por atributo en el HTML.
+- **Sin Google Fonts ni CDN.** La tipografía está autoalojada en
+  `web/shared/ds/assets/fonts/`; la CSP no permite `font-src` externo.
+- `web/shared/ds/` es la única copia del design system — no dupliques tokens, logos ni
+  tipografías en otra carpeta.
+- Contenido en español (excepción: acentos de marca cortos y deliberados, como el tagline
+  en inglés del hero).
