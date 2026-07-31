@@ -1,93 +1,104 @@
-/* Coming soon — hero + obra en construcción. Sin dependencias externas, sin inline style
-   (CSP: style-src 'self'). Colores dinámicos por rol vía variables ya definidas acá, nunca
-   por atributo style="" (ver CLAUDE.md). */
+/* Coming soon — todo en un solo cuadro (sin scroll), personajes caminando alrededor del
+   texto. Sin dependencias externas, sin inline style (CSP: style-src 'self'). Colores
+   dinámicos por rol vía variables ya definidas acá, nunca por atributo style="" (ver
+   CLAUDE.md). El footer vive fuera de este cuadro, más abajo en el flujo normal. */
 
-/* ---------- Hero ---------- */
-.cs-hero{padding:clamp(56px,10vw,104px) 0 clamp(24px,5vw,48px);text-align:center;background:
-  radial-gradient(ellipse 80% 60% at 50% 0%,var(--cccn-blue-100) 0%,var(--bg) 68%);}
-.cs-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border-radius:999px;
-  background:var(--cccn-blue-900);color:#fff;font-size:12px;font-weight:700;letter-spacing:.18em;
+/* ---------- Cuadro único (hero + obra en construcción) ---------- */
+.cs-frame{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(14px,3vh,32px) 0;background:radial-gradient(ellipse 90% 70% at 50% 0%,var(--cccn-blue-100) 0%,var(--bg) 72%);}
+.cs-frame__inner{display:flex;flex-direction:column;align-items:center;text-align:center;
+  gap:clamp(6px,1.3vh,12px);}
+
+.cs-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;
+  background:var(--cccn-blue-900);color:#fff;font-size:11px;font-weight:700;letter-spacing:.16em;
   text-transform:uppercase;}
-.cs-badge__dot{width:7px;height:7px;border-radius:50%;background:var(--cccn-red);animation:cs-pulse 1.6s ease-in-out infinite;}
-.cs-logo-wrap{margin:32px auto 8px;width:min(220px,42vw);animation:cs-float 5s ease-in-out infinite;}
-.cs-logo-wrap img{width:100%;height:auto;filter:drop-shadow(0 18px 34px rgba(4,26,113,.18));}
-.cs-hero__title{margin:20px auto 0;max-width:16ch;}
-.cs-hero__lede{margin:18px auto 0;max-width:52ch;}
-.cs-hero__tag{margin:14px auto 0;font-family:var(--font-display);font-style:italic;font-weight:600;
-  font-size:clamp(16px,2vw,20px);color:var(--cccn-red);}
-@keyframes cs-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.cs-badge__dot{width:6px;height:6px;border-radius:50%;background:var(--cccn-red);animation:cs-pulse 1.6s ease-in-out infinite;}
+.cs-logo-wrap{width:clamp(56px,7vw,92px);margin:2px 0;animation:cs-float 5s ease-in-out infinite;}
+.cs-logo-wrap img{width:100%;height:auto;filter:drop-shadow(0 12px 22px rgba(4,26,113,.16));}
+.cs-hero__title.h-display{font-size:clamp(26px,4vw,48px);line-height:1.03;margin:0;}
+.cs-hero__lede.lede{font-size:clamp(13px,1.15vw,15.5px);max-width:58ch;margin:0 auto;}
+.cs-hero__tag{font-family:var(--font-display);font-style:italic;font-weight:600;
+  font-size:clamp(13px,1.4vw,16px);color:var(--cccn-red);margin:0;}
+@keyframes cs-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @keyframes cs-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.3)}}
 
-/* ---------- Sección obra en construcción ---------- */
-.cs-site{padding:8px 0 clamp(56px,9vw,96px);background:
-  linear-gradient(var(--tint) 0%,var(--tint) 100%),
-  repeating-linear-gradient(0deg,rgba(4,26,113,.05) 0 1px,transparent 1px 32px),
-  repeating-linear-gradient(90deg,rgba(4,26,113,.05) 0 1px,transparent 1px 32px);
-  border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
-.cs-site__head{padding:40px 0 24px;text-align:center;}
-.cs-site__hint{margin:10px auto 0;}
-.cs-rail{display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;padding:8px clamp(16px,6vw,calc(50vw - 440px)) 28px;
-  -webkit-overflow-scrolling:touch;scrollbar-width:thin;}
-.cs-rail::-webkit-scrollbar{height:8px;}
-.cs-rail::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:99px;}
-.cs-dots{display:flex;justify-content:center;gap:8px;margin-top:4px;}
-.cs-dot{width:8px;height:8px;border-radius:50%;background:var(--line-strong);border:none;padding:0;cursor:pointer;transition:background .15s ease,transform .15s ease;}
-.cs-dot.is-active{background:var(--cccn-red);transform:scale(1.3);}
+.cs-obra{margin-top:clamp(4px,1.4vh,14px);}
+.cs-obra .h-eyebrow{font-size:10.5px;}
+.cs-obra .h-2{font-size:clamp(16px,2vw,23px);margin-top:2px;}
 
-/* ---------- Escenario ---------- */
-.cs-scene{position:relative;flex:0 0 min(880px,88vw);height:420px;scroll-snap-align:center;
-  border-radius:var(--r-lg);overflow:hidden;background:var(--bg);border:1px solid var(--line);
-  box-shadow:var(--shadow-md);}
-.cs-scene__tape{height:8px;width:100%;background:linear-gradient(to right,var(--cccn-red) 0 33.33%,var(--cccn-gray) 33.33% 66.66%,var(--cccn-blue-700) 66.66% 100%);}
-.cs-scene__sky{position:absolute;inset:8px 0 0 0;background:linear-gradient(180deg,var(--sky,var(--cccn-blue-100)) 0%,var(--bg) 78%);}
-.cs-scene__ground{position:absolute;left:0;right:0;bottom:0;height:54px;background:var(--cream-2);
-  border-top:2px dashed var(--line-strong);}
-.cs-scene__label{position:absolute;left:18px;bottom:16px;z-index:5;background:rgba(255,255,255,.92);
-  border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;
-  color:var(--cccn-blue-900);letter-spacing:.02em;}
-.cs-scene__hint{position:absolute;right:18px;bottom:16px;z-index:5;font-size:11px;color:var(--muted);
-  background:rgba(255,255,255,.85);padding:5px 10px;border-radius:999px;}
+/* ---------- Escenario (una sola escena, sin scroll, sin tarjeta) ---------- */
+.cs-scene{position:relative;width:min(1040px,94vw);height:clamp(120px,17vh,168px);
+  margin-top:clamp(8px,1.6vh,18px);overflow:hidden;}
+.cs-scene__sky{position:absolute;inset:0;background:linear-gradient(180deg,var(--sky,transparent) 0%,transparent 85%);
+  border-radius:var(--r-lg);}
+.cs-scene__ground{position:absolute;left:6%;right:6%;bottom:0;height:2px;
+  background:repeating-linear-gradient(to right,var(--line-strong) 0 10px,transparent 10px 18px);}
 .cs-scene--weld{--sky:var(--cccn-blue-100);} .cs-scene--code{--sky:#EAF1FB;} .cs-scene--arch{--sky:#EFF3E5;}
 .cs-scene--magic{--sky:#F1E7FB;} .cs-scene--lab{--sky:#E4F6FA;} .cs-scene--data{--sky:#E9EDFA;}
 .cs-scene--write{--sky:#F7ECE3;} .cs-scene--paint{--sky:#F7E7EF;} .cs-scene--farm{--sky:#F0F5E2;}
 .cs-scene--cook{--sky:#FDEDE3;} .cs-scene--bridge{--sky:var(--cccn-blue-100);}
-.cs-scene--stars{--sky:#0B1442;}
-.cs-scene--stars .cs-scene__ground{background:#131c4e;border-top-color:#2b366e;}
-.cs-scene--stars .cs-scene__label{background:rgba(11,20,66,.85);color:#fff;border-color:#2b366e;}
+.cs-scene--stars{--sky:rgba(11,20,66,.5);}
+.cs-scene--stars .cs-scene__ground{background:repeating-linear-gradient(to right,#2b366e 0 10px,transparent 10px 18px);}
 
-/* ---------- Actor (personaje + burbuja) ---------- */
-.actor{position:absolute;bottom:40px;width:70px;}
-.actor.pos-1{left:6%;} .actor.pos-2{left:26%;} .actor.pos-3{left:46%;} .actor.pos-4{left:66%;} .actor.pos-5{left:82%;}
-.actor.pos-c1{left:20%;} .actor.pos-c2{left:50%;margin-left:-35px;} .actor.pos-c3{left:78%;margin-left:-70px;}
+.cs-scene__props{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;
+  transform:scale(.62);transform-origin:50% 100%;pointer-events:none;}
 
-/* ---------- Burbuja de diálogo ---------- */
-.bubble{position:absolute;left:50%;bottom:calc(100% + 10px);transform:translate(-50%,6px) scale(.9);
+/* ---------- Actor: carril + caminata + escala ---------- */
+.actor{position:absolute;bottom:0;cursor:pointer;}
+.actor.lane-a{left:8%;} .actor.lane-b{left:56%;} .actor.lane-solo{left:36%;}
+.actor:focus-visible .rig-scale{filter:drop-shadow(0 0 0 3px var(--cccn-red));}
+.actor__walk{position:relative;animation-name:cs-walk;animation-timing-function:ease-in-out;
+  animation-iteration-count:infinite;}
+@keyframes cs-walk{
+  0%{transform:translateX(0) scaleX(1);}
+  45%{transform:translateX(var(--walk-dist,90px)) scaleX(1);}
+  50%{transform:translateX(var(--walk-dist,90px)) scaleX(-1);}
+  95%{transform:translateX(0) scaleX(-1);}
+  100%{transform:translateX(0) scaleX(1);}
+}
+.rig-scale{transform:scale(.52);transform-origin:bottom center;}
+
+/* ---------- Burbuja de diálogo (sin texto en el DOM mientras está oculta) ---------- */
+.bubble{position:absolute;left:50%;bottom:calc(100% + 8px);transform:translate(-50%,6px) scale(.9);
   min-width:150px;max-width:190px;background:#fff;border:1px solid var(--line-strong);border-radius:14px;
   padding:9px 12px;font-size:12.5px;line-height:1.35;color:var(--ink-2);text-align:center;
-  box-shadow:var(--shadow-md);opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease;z-index:20;}
+  box-shadow:var(--shadow-md);opacity:0;transition:opacity .18s ease,transform .18s ease;z-index:20;}
 .bubble::before{content:"";position:absolute;left:50%;top:100%;margin-left:-7px;border:7px solid transparent;
   border-top-color:#fff;}
 .bubble::after{content:"";position:absolute;top:-1px;left:14px;right:14px;height:3px;border-radius:2px;
   background:var(--cccn-red);}
 .bubble.is-visible{opacity:1;transform:translate(-50%,0) scale(1);}
-.actor{cursor:pointer;}
-.actor:focus-visible .rig{filter:drop-shadow(0 0 0 3px var(--cccn-red));}
+.bubble[hidden]{display:none;}
 
-/* ---------- Rig (figura de palitos) ---------- */
-.rig{position:relative;width:64px;height:120px;margin:0 auto;animation:cs-bob 2.6s ease-in-out infinite;}
-.actor:nth-child(3n) .rig{animation-delay:-.7s;} .actor:nth-child(3n+1) .rig{animation-delay:-1.6s;}
+/* ---------- Rig (figura de palitos con indumentaria) ---------- */
+.rig{position:relative;width:64px;height:120px;margin:0 auto;animation:cs-bob 2.4s ease-in-out infinite;}
 @keyframes cs-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 .rig__head{position:absolute;top:0;left:50%;width:25px;height:25px;margin-left:-12.5px;border-radius:50%;
-  background:var(--ink);z-index:4;}
-.rig__torso{position:absolute;top:23px;left:50%;width:6px;height:44px;margin-left:-3px;border-radius:3px;
-  background:var(--ink);z-index:2;transform-origin:top center;}
-.rig__arm{position:absolute;top:28px;width:6px;height:36px;border-radius:3px;background:var(--ink);
+  background:var(--ink);z-index:4;animation:cs-headbob .8s ease-in-out infinite;}
+@keyframes cs-headbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.5px)}}
+.rig__torso{position:absolute;top:22px;left:50%;width:20px;height:42px;margin-left:-10px;
+  border-radius:9px 9px 5px 5px;background:var(--ink);z-index:2;transform-origin:top center;}
+.rig__arm{position:absolute;top:26px;width:7px;height:34px;border-radius:4px;background:var(--ink);
   transform-origin:top center;z-index:3;}
-.rig__arm--l{left:16px;} .rig__arm--r{left:42px;}
-.rig__leg{position:absolute;top:64px;width:7px;height:44px;border-radius:3px;background:var(--ink);
-  transform-origin:top center;z-index:1;}
-.rig__leg--l{left:21px;} .rig__leg--r{left:36px;}
+.rig__arm--l{left:15px;} .rig__arm--r{left:42px;}
+.rig__hand{position:absolute;bottom:-4px;left:50%;width:8px;height:8px;margin-left:-4px;border-radius:50%;
+  background:var(--ink);}
+.rig__leg{position:absolute;top:60px;width:8px;height:42px;border-radius:4px;background:#2a2f3d;
+  transform-origin:top center;z-index:1;animation:cs-stride .74s ease-in-out infinite;}
+.rig__leg--l{left:22px;} .rig__leg--r{left:34px;animation-delay:-.37s;}
+.rig__foot{position:absolute;bottom:-4px;left:50%;width:14px;height:6px;margin-left:-7px;border-radius:3px;
+  background:#1a1d27;}
+@keyframes cs-stride{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(20deg)}}
 .tool{position:absolute;bottom:-3px;left:50%;transform:translateX(-50%);}
+
+/* Indumentaria (torso) por rol — un color, look reconocible sin recargar la silueta */
+.outfit-orange{background:var(--acc-orange);}
+.outfit-blue{background:var(--cccn-blue-700);}
+.outfit-olive{background:var(--acc-olive);}
+.outfit-purple{background:var(--acc-purple);}
+.outfit-cream{background:var(--cream);border:2px solid var(--line-strong);}
+.outfit-burgundy{background:var(--acc-burgundy);}
+.outfit-navy{background:var(--cccn-blue-900);}
 
 /* ---------- Accesorios de cabeza (uno por rol) ---------- */
 .acc{position:absolute;top:-6px;left:50%;transform:translateX(-50%);z-index:5;}
@@ -134,7 +145,7 @@
 .tool-pencil{width:2px;height:16px;background:var(--acc-orange);border-radius:2px;transform:translateX(-50%) rotate(15deg);}
 .tool-book{width:12px;height:9px;border-radius:1px 4px 4px 1px;background:var(--acc-purple);}
 
-/* ---------- Poses (rotación de brazos/piernas por rol) ---------- */
+/* ---------- Poses (gesto de trabajo, encima de la caminata) ---------- */
 .pose-weld .rig__arm--r{animation:cs-weld 1s ease-in-out infinite;}
 @keyframes cs-weld{0%,100%{transform:rotate(2deg)}45%{transform:rotate(30deg)}}
 .pose-weld .rig__arm--l{animation:cs-sway 2.4s ease-in-out infinite;}
@@ -160,7 +171,7 @@
 .pose-till .rig__torso{animation:cs-lean 1.8s ease-in-out infinite;}
 .pose-hammer .rig__arm--r{animation:cs-hammer 1.1s ease-in infinite;}
 @keyframes cs-hammer{0%,30%{transform:rotate(-60deg)}45%{transform:rotate(10deg)}100%{transform:rotate(-60deg)}}
-.pose-scan .rig{animation:cs-scan 5s ease-in-out infinite,cs-bob 2.6s ease-in-out infinite;}
+.pose-scan .rig{animation:cs-scan 5s ease-in-out infinite,cs-bob 2.4s ease-in-out infinite;}
 @keyframes cs-scan{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
 .pose-idle .rig__arm--l{animation:cs-sway 3.2s ease-in-out infinite;}
 .pose-idle .rig__arm--r{animation:cs-sway 3.2s ease-in-out .4s infinite;}
@@ -182,7 +193,6 @@
 
 .prop-desk{bottom:40px;left:50%;transform:translateX(-50%);width:150px;height:74px;}
 .prop-desk__top{position:absolute;bottom:0;width:100%;height:6px;background:#8a6a4a;border-radius:2px;}
-.prop-desk__leg{position:absolute;bottom:-0px;width:5px;height:0;background:#6b503a;}
 .prop-desk__monitor{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:76px;height:52px;
   background:var(--cccn-blue-900);border-radius:6px;padding:6px;}
 .prop-desk__line{height:4px;border-radius:2px;background:var(--acc-cyan);margin-bottom:5px;animation:cs-codeline 2.4s ease-in-out infinite;}
@@ -300,9 +310,15 @@
 .cs-footer-grid{grid-template-columns:auto 1fr;justify-content:space-between;}
 @media (max-width:520px){.cs-footer-grid{grid-template-columns:1fr;}}
 
+/* ---------- Movimiento reducido ---------- */
+@media (prefers-reduced-motion:reduce){
+  .rig,.rig__head,.rig__leg,.rig__arm,.rig__torso,.actor__walk,.cs-logo-wrap,.cs-badge__dot,
+  .spark,.bub,.steam,.sprout,.stroke,.bar,.star,.flame,.prop-desk__cursor,.prop-desk__line,
+  .prop-cauldron__glow,.prop-typewriter__paper{animation:none !important;}
+}
+
 /* ---------- Responsivo ---------- */
 @media (max-width:640px){
-  .cs-scene{height:380px;}
-  .actor{width:56px;}
-  .rig{width:52px;height:98px;transform:scale(.86);}
+  .cs-scene{height:clamp(110px,20vh,150px);}
+  .rig-scale{transform:scale(.4);}
 }
