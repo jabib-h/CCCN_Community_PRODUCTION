@@ -32,4 +32,5 @@ acá "por si acaso": si un módulo no está promovido todavía, no pertenece a e
 
 No hay build ni pruebas automatizadas todavía (sitio estático). Antes de un cambio,
 abrir `web/index.html` con un servidor local (ver `README.md`) y confirmar visualmente
-que las escenas cargan y que la consola del navegador no muestra errores de CSP.
+que el logo enlaza al sitio oficial, que el wordmark anima, y que la consola del
+navegador no muestra errores de CSP.

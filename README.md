@@ -21,9 +21,8 @@ CCCN_Community_PRODUCTION/
 ├── staticwebapp.config.json   Cabeceras de seguridad + fallback de rutas (Azure SWA)
 ├── docs/DEPLOY_AZURE.md       Cómo crear el Static Web App y apuntar el dominio
 └── web/                       Todo el sitio — carpeta raíz de la app en Azure SWA
-    ├── index.html             Landing: logo, mensaje "próximamente", obra en construcción
-    ├── coming-soon.css        Estilos de la landing y de las escenas animadas
-    ├── coming-soon.js         Escenas de personajes (datos) + diálogo al hacer click
+    ├── index.html             Landing: logo (enlaza al sitio oficial) + wordmark "Community"
+    ├── coming-soon.css        Estilos de la landing (glow/chispas en CSS puro, sin JS)
     └── shared/
         ├── img/                logo.png, logo-white.png
         └── ds/                 FUENTE ÚNICA DE MARCA: tokens, tipografía autoalojada, componentes
