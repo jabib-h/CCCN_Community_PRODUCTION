@@ -10,54 +10,129 @@
 
 .cs-frame{position:relative;flex:1;display:flex;flex-direction:column;justify-content:center;
   overflow:hidden;isolation:isolate;
-  /* más aire abajo que arriba: sube el bloque por encima del centro óptico */
-  padding:clamp(24px,4.5vh,56px) 0 clamp(34px,6.5vh,76px);
+  padding:clamp(20px,4vh,52px) 0 clamp(30px,6vh,72px);
   background:radial-gradient(ellipse 120% 78% at 50% -10%,var(--cccn-blue-100) 0%,rgba(232,235,246,0) 62%),var(--bg);}
-.cs-frame__inner{display:flex;flex-direction:column;align-items:center;text-align:center;
-  gap:clamp(12px,2.2vh,24px);}
+.cs-frame__inner{position:relative;z-index:1;
+  display:flex;flex-direction:column;align-items:center;text-align:center;}
 
 /* Textura de puntos: visible solo hacia los bordes (la máscara la apaga en el centro,
    donde va el texto, para no restarle legibilidad al wordmark). */
 .cs-frame::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
   background-image:radial-gradient(var(--line-strong) 1px,transparent 1px);background-size:26px 26px;
-  opacity:.45;
-  -webkit-mask-image:radial-gradient(ellipse 64% 58% at 50% 46%,transparent 28%,#000 100%);
-  mask-image:radial-gradient(ellipse 64% 58% at 50% 46%,transparent 28%,#000 100%);}
+  opacity:.28;
+  -webkit-mask-image:radial-gradient(ellipse 66% 60% at 50% 46%,transparent 26%,#000 100%);
+  mask-image:radial-gradient(ellipse 66% 60% at 50% 46%,transparent 26%,#000 100%);}
 
 /* Manchas de color desenfocadas que derivan muy lento: dan profundidad sin ruido. */
 .cs-aura{position:absolute;z-index:-1;border-radius:50%;filter:blur(70px);pointer-events:none;}
 .cs-aura--blue{width:min(46vw,560px);aspect-ratio:1;left:-9vw;top:-8vh;
-  background:rgba(45,71,157,.20);animation:cs-drift-a 26s ease-in-out infinite;}
+  background:rgba(45,71,157,.20);animation:cs-drift-a 30s ease-in-out infinite;}
 .cs-aura--red{width:min(38vw,460px);aspect-ratio:1;right:-7vw;bottom:-10vh;
-  background:rgba(238,48,78,.13);animation:cs-drift-b 33s ease-in-out infinite;}
+  background:rgba(238,48,78,.13);animation:cs-drift-b 38s ease-in-out infinite;}
 @keyframes cs-drift-a{0%,100%{transform:translate3d(0,0,0) scale(1);}50%{transform:translate3d(6vw,4vh,0) scale(1.12);}}
 @keyframes cs-drift-b{0%,100%{transform:translate3d(0,0,0) scale(1);}50%{transform:translate3d(-5vw,-5vh,0) scale(1.1);}}
 
+/* ---------- Campo de estrellas: cubre TODA la pantalla, no solo el wordmark ----------
+   Sin JS no se pueden sortear posiciones, así que van una por una. Se reparten por la
+   periferia (el centro queda libre para el texto) y las que rodean a "Community" son un
+   poco más grandes, para que la vista siga cayendo ahí. */
+.cs-stars{position:absolute;inset:0;z-index:0;pointer-events:none;}
+.cs-stars i{position:absolute;display:block;
+  clip-path:polygon(50% 0%,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0% 50%,39% 39%);
+  filter:drop-shadow(0 0 4px rgba(45,71,157,.35));
+  animation:cs-twinkle 6s ease-in-out infinite;}
+
+/* banda superior */
+.cs-stars i:nth-child(1){left:6%;top:9%;width:7px;height:7px;background:var(--cccn-red);animation-delay:1.4s;animation-duration:5.7s;}
+.cs-stars i:nth-child(2){left:14%;top:4%;width:4px;height:4px;background:var(--acc-orange);animation-delay:2.7s;animation-duration:6.0s;}
+.cs-stars i:nth-child(3){left:23%;top:11%;width:6px;height:6px;background:var(--acc-cyan);animation-delay:4.1s;animation-duration:6.3s;}
+.cs-stars i:nth-child(4){left:32%;top:6%;width:5px;height:5px;background:var(--acc-purple);animation-delay:5.5s;animation-duration:6.6s;}
+.cs-stars i:nth-child(5){left:44%;top:12%;width:8px;height:8px;background:var(--acc-olive);animation-delay:6.9s;animation-duration:7.0s;}
+.cs-stars i:nth-child(6){left:56%;top:3%;width:4px;height:4px;background:var(--cccn-blue-500);animation-delay:0.2s;animation-duration:7.3s;}
+.cs-stars i:nth-child(7){left:65%;top:10%;width:6px;height:6px;background:var(--cccn-gray);animation-delay:1.6s;animation-duration:7.6s;}
+.cs-stars i:nth-child(8){left:74%;top:5%;width:7px;height:7px;background:var(--cccn-blue-700);animation-delay:3.0s;animation-duration:5.7s;}
+.cs-stars i:nth-child(9){left:84%;top:12%;width:5px;height:5px;background:var(--cccn-red);animation-delay:4.3s;animation-duration:6.0s;}
+.cs-stars i:nth-child(10){left:93%;top:7%;width:5px;height:5px;background:var(--acc-orange);animation-delay:5.7s;animation-duration:6.3s;}
+/* banda inferior */
+.cs-stars i:nth-child(11){left:7%;top:92%;width:7px;height:7px;background:var(--acc-cyan);animation-delay:7.1s;animation-duration:6.6s;}
+.cs-stars i:nth-child(12){left:16%;top:88%;width:4px;height:4px;background:var(--acc-purple);animation-delay:0.4s;animation-duration:6.9s;}
+.cs-stars i:nth-child(13){left:26%;top:95%;width:6px;height:6px;background:var(--acc-olive);animation-delay:1.8s;animation-duration:7.2s;}
+.cs-stars i:nth-child(14){left:35%;top:89%;width:5px;height:5px;background:var(--cccn-blue-500);animation-delay:3.2s;animation-duration:7.5s;}
+.cs-stars i:nth-child(15){left:46%;top:94%;width:8px;height:8px;background:var(--cccn-gray);animation-delay:4.6s;animation-duration:5.7s;}
+.cs-stars i:nth-child(16){left:55%;top:88%;width:4px;height:4px;background:var(--cccn-blue-700);animation-delay:5.9s;animation-duration:6.0s;}
+.cs-stars i:nth-child(17){left:66%;top:93%;width:6px;height:6px;background:var(--cccn-red);animation-delay:7.3s;animation-duration:6.3s;}
+.cs-stars i:nth-child(18){left:76%;top:90%;width:7px;height:7px;background:var(--acc-orange);animation-delay:0.7s;animation-duration:6.6s;}
+.cs-stars i:nth-child(19){left:86%;top:96%;width:5px;height:5px;background:var(--acc-cyan);animation-delay:2.0s;animation-duration:6.9s;}
+.cs-stars i:nth-child(20){left:94%;top:89%;width:5px;height:5px;background:var(--acc-purple);animation-delay:3.4s;animation-duration:7.2s;}
+/* franjas laterales (se ocultan en pantallas angostas) */
+.cs-stars i:nth-child(21){left:4%;top:20%;width:7px;height:7px;background:var(--acc-olive);animation-delay:4.8s;animation-duration:7.5s;}
+.cs-stars i:nth-child(22){left:11%;top:28%;width:4px;height:4px;background:var(--cccn-blue-500);animation-delay:6.1s;animation-duration:5.6s;}
+.cs-stars i:nth-child(23){left:2%;top:37%;width:6px;height:6px;background:var(--cccn-gray);animation-delay:7.5s;animation-duration:5.9s;}
+.cs-stars i:nth-child(24){left:14%;top:45%;width:5px;height:5px;background:var(--cccn-blue-700);animation-delay:0.9s;animation-duration:6.2s;}
+.cs-stars i:nth-child(25){left:6%;top:53%;width:8px;height:8px;background:var(--cccn-red);animation-delay:2.2s;animation-duration:6.5s;}
+.cs-stars i:nth-child(26){left:12%;top:62%;width:4px;height:4px;background:var(--acc-orange);animation-delay:3.6s;animation-duration:6.9s;}
+.cs-stars i:nth-child(27){left:3%;top:70%;width:6px;height:6px;background:var(--acc-cyan);animation-delay:5.0s;animation-duration:7.2s;}
+.cs-stars i:nth-child(28){left:15%;top:78%;width:7px;height:7px;background:var(--acc-purple);animation-delay:6.4s;animation-duration:7.5s;}
+.cs-stars i:nth-child(29){left:8%;top:84%;width:5px;height:5px;background:var(--acc-olive);animation-delay:7.7s;animation-duration:5.6s;}
+.cs-stars i:nth-child(30){left:95%;top:21%;width:5px;height:5px;background:var(--cccn-blue-500);animation-delay:1.1s;animation-duration:5.9s;}
+.cs-stars i:nth-child(31){left:87%;top:29%;width:7px;height:7px;background:var(--cccn-gray);animation-delay:2.5s;animation-duration:6.2s;}
+.cs-stars i:nth-child(32){left:97%;top:38%;width:4px;height:4px;background:var(--cccn-blue-700);animation-delay:3.8s;animation-duration:6.5s;}
+.cs-stars i:nth-child(33){left:85%;top:46%;width:6px;height:6px;background:var(--cccn-red);animation-delay:5.2s;animation-duration:6.8s;}
+.cs-stars i:nth-child(34){left:93%;top:54%;width:5px;height:5px;background:var(--acc-orange);animation-delay:6.6s;animation-duration:7.1s;}
+.cs-stars i:nth-child(35){left:88%;top:63%;width:8px;height:8px;background:var(--acc-cyan);animation-delay:8.0s;animation-duration:7.4s;}
+.cs-stars i:nth-child(36){left:96%;top:71%;width:4px;height:4px;background:var(--acc-purple);animation-delay:1.3s;animation-duration:5.6s;}
+.cs-stars i:nth-child(37){left:84%;top:79%;width:6px;height:6px;background:var(--acc-olive);animation-delay:2.7s;animation-duration:5.9s;}
+.cs-stars i:nth-child(38){left:91%;top:85%;width:7px;height:7px;background:var(--cccn-blue-500);animation-delay:4.1s;animation-duration:6.2s;}
+/* acento: enmarcan el wordmark solo en pantallas anchas */
+.cs-stars i:nth-child(39){left:20%;top:36%;width:9px;height:9px;background:var(--cccn-gray);animation-delay:5.4s;animation-duration:6.5s;}
+.cs-stars i:nth-child(40){left:78%;top:39%;width:9px;height:9px;background:var(--cccn-blue-700);animation-delay:6.8s;animation-duration:6.8s;}
+.cs-stars i:nth-child(41){left:23%;top:58%;width:9px;height:9px;background:var(--cccn-red);animation-delay:0.2s;animation-duration:7.1s;}
+.cs-stars i:nth-child(42){left:76%;top:61%;width:9px;height:9px;background:var(--acc-orange);animation-delay:1.5s;animation-duration:7.4s;}
+.cs-stars i:nth-child(43){left:18%;top:47%;width:9px;height:9px;background:var(--acc-cyan);animation-delay:2.9s;animation-duration:5.5s;}
+.cs-stars i:nth-child(44){left:81%;top:50%;width:9px;height:9px;background:var(--acc-purple);animation-delay:4.3s;animation-duration:5.8s;}
+
+/* meseta larga en el medio: siempre hay varias encendidas a la vez, así el campo respira
+   en vez de parpadear de golpe. */
+@keyframes cs-twinkle{
+  0%,100%{opacity:0;transform:scale(.3) rotate(0deg);}
+  32%,60%{opacity:1;transform:scale(1) rotate(45deg);}
+}
+
 /* ---------- Logo (enlaza al sitio oficial) ---------- */
-.cs-logo-wrap{display:inline-block;width:clamp(148px,18vw,262px);}
+.cs-logo-wrap{display:inline-block;width:clamp(128px,15vw,214px);
+  margin-bottom:clamp(16px,3.4vh,42px);}
 .cs-logo-wrap img{width:100%;height:auto;filter:drop-shadow(0 18px 34px rgba(4,26,113,.16));
   transition:transform .25s cubic-bezier(.22,.61,.36,1);}
 .cs-logo-wrap:hover img,.cs-logo-wrap:focus-visible img{transform:translateY(-3px) scale(1.02);}
 
 /* ---------- Lockup: "Próximamente" + "Community" ---------- */
 .cs-word-wrap{position:relative;display:inline-flex;justify-content:center;max-width:100%;
-  padding:clamp(14px,3.2vh,32px) clamp(16px,8vw,84px);}
+  padding:0 clamp(10px,3vw,32px);}
 /* halo detrás del wordmark */
-.cs-word-wrap::before{content:"";position:absolute;inset:-16% -6%;z-index:0;pointer-events:none;
-  background:radial-gradient(ellipse 58% 56% at 50% 52%,rgba(45,71,157,.22) 0%,rgba(45,71,157,0) 70%);
-  filter:blur(10px);animation:cs-glow 6s ease-in-out infinite;}
-@keyframes cs-glow{0%,100%{opacity:.5;transform:scale(1);}50%{opacity:1;transform:scale(1.07);}}
+.cs-word-wrap::before{content:"";position:absolute;inset:-22% -10%;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 56% 54% at 50% 52%,rgba(45,71,157,.20) 0%,rgba(45,71,157,0) 70%);
+  filter:blur(12px);animation:cs-glow 7s ease-in-out infinite;}
+@keyframes cs-glow{0%,100%{opacity:.55;transform:scale(1);}50%{opacity:1;transform:scale(1.06);}}
 
 /* margin:0 — el h1 trae margen del navegador y el design system solo resetea html/body */
-.cs-lock{position:relative;z-index:1;margin:0;font-size:clamp(11px,1.4vw,19px);}
+.cs-lock{position:relative;z-index:1;margin:0;font-size:clamp(11px,1.3vw,17px);}
 /* el letter-spacing deja aire sobrante a la derecha; el margen negativo lo descuenta
    para que la línea quede realmente centrada bajo el wordmark. */
-.cs-lock>span:first-child{letter-spacing:.3em;margin-right:-.3em;color:var(--cccn-red);}
+.cs-lock>span:first-child{letter-spacing:.42em;margin-right:-.42em;color:var(--cccn-red);
+  margin-bottom:clamp(6px,1.2vh,14px);}
 /* "Community" es una sola palabra: no puede reflowear, así que su ancho DEBE escalar con
-   el viewport hasta abajo. Medido: la palabra ocupa 5.31 × el font-size. Con 12.5vw y un
-   mínimo de 34px, a 320px de ancho da 213px + 51px de padding = 264px, dentro de los
-   288px útiles del contenedor. Subir el mínimo la vuelve a desbordar en pantallas chicas. */
-.cs-lock em{font-size:clamp(34px,12.5vw,138px);line-height:.9;color:var(--cccn-blue-900);}
+   el viewport hasta abajo. Medido: la palabra ocupa 5.31 × el font-size. Con 14vw y un
+   mínimo de 32px queda ~82% del contenedor en todo el rango (a 320px: 238px de palabra +
+   20px de padding dentro de 288px útiles). Subir el mínimo la desborda en pantallas
+   chicas; subir el tope la desborda a partir de 1240px, donde .container deja de crecer. */
+/* El padding NO es decorativo: background-clip:text solo pinta dentro de la caja del
+   elemento, y la tinta de la itálica se sale de ella — el brazo de la "y" quedaba cortado
+   en seco a la derecha y el descendente por abajo. Medido a 182px: 9px de desborde a la
+   derecha (0.05em) y nada a la izquierda. Los valores van al doble por seguridad, y el
+   margen negativo devuelve el ancho de maquetación para que el centrado no se corra.
+   Si algún día cambia la palabra o la tipografía, hay que volver a medirlo. */
+.cs-lock em{font-size:clamp(32px,14vw,182px);line-height:1;color:var(--cccn-blue-900);
+  padding-right:.1em;margin-right:-.1em;padding-bottom:.14em;}
 
 /* Brillo que recorre el wordmark. El color base se declara antes: si el navegador no
    soporta background-clip:text, el texto igual se ve (solo se pierde el brillo).
@@ -72,92 +147,66 @@
       var(--cccn-blue-900) 56%,var(--cccn-blue-900) 100%);
     background-size:200% 100%;background-position:100% 0;background-repeat:no-repeat;
     -webkit-background-clip:text;background-clip:text;color:transparent;
-    animation:cs-shimmer 7.5s ease-in-out infinite;}
+    animation:cs-shimmer 9s ease-in-out infinite;}
 }
-@keyframes cs-shimmer{0%,18%{background-position:100% 0;}66%,100%{background-position:0% 0;}}
-
-/* ---------- Destellos alrededor del wordmark ---------- */
-.cs-spark{position:absolute;z-index:1;pointer-events:none;
-  clip-path:polygon(50% 0%,63% 37%,100% 50%,63% 63%,50% 100%,37% 63%,0% 50%,37% 37%);
-  filter:drop-shadow(0 0 5px rgba(45,71,157,.30));
-  animation:cs-twinkle 3.4s ease-in-out infinite;}
-.cs-spark--1{top:5%;left:0;width:16px;height:16px;background:var(--acc-orange);animation-delay:1.2s;}
-.cs-spark--2{top:71%;left:5%;width:10px;height:10px;background:var(--cccn-red);animation-delay:2.7s;}
-.cs-spark--3{top:-2%;right:10%;width:13px;height:13px;background:var(--acc-cyan);animation-delay:2.1s;}
-.cs-spark--4{bottom:2%;right:1%;width:15px;height:15px;background:var(--cccn-blue-700);animation-delay:3.6s;}
-.cs-spark--5{top:38%;left:-2%;width:9px;height:9px;background:var(--cccn-blue-500);animation-delay:4.4s;}
-.cs-spark--6{top:47%;right:-2%;width:9px;height:9px;background:var(--cccn-red);animation-delay:1.7s;}
-.cs-spark--7{top:12%;right:25%;width:8px;height:8px;background:var(--acc-purple);animation-delay:3.1s;}
-.cs-spark--8{bottom:10%;left:23%;width:8px;height:8px;background:var(--acc-olive);animation-delay:4.9s;}
-/* meseta larga en el medio: así siempre hay varios destellos encendidos a la vez y no
-   una sola chispa suelta parpadeando (los delays desfasados hacen el resto). */
-@keyframes cs-twinkle{
-  0%,100%{opacity:0;transform:scale(.3) rotate(0deg);}
-  30%,62%{opacity:1;transform:scale(1) rotate(45deg);}
-}
+@keyframes cs-shimmer{0%,20%{background-position:100% 0;}68%,100%{background-position:0% 0;}}
 
 /* ---------- Tagline (regla con filetes del design system) ---------- */
-.cs-rule{margin:0;color:var(--muted);font-size:clamp(11px,1.1vw,13px);}
-.cs-rule::before,.cs-rule::after{width:clamp(20px,5vw,52px);}
+/* el descendente de la "y" de Community baja mucho a 182px: sin este aire el tagline
+   queda pegado a la cola. */
+.cs-rule{margin:clamp(10px,2vh,26px) 0 0;color:var(--muted);
+  font-size:clamp(10.5px,1.05vw,13px);letter-spacing:.16em;}
+.cs-rule::before,.cs-rule::after{width:clamp(24px,5vw,64px);}
 
 /* ---------- Qué trae Community ---------- */
-.cs-mods{list-style:none;margin:clamp(4px,1.4vh,14px) 0 0;padding:0;
+.cs-mods{list-style:none;margin:clamp(20px,3.6vh,44px) 0 0;padding:0;
   display:flex;flex-wrap:wrap;justify-content:center;gap:9px clamp(8px,1.1vw,13px);}
-.cs-mod{display:inline-flex;align-items:center;gap:9px;padding:8px 16px;border-radius:999px;
+.cs-mod{display:inline-flex;align-items:center;padding:9px 18px;border-radius:999px;
   border:1px solid var(--line);background:rgba(255,255,255,.72);
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
-  font-size:13px;font-weight:600;color:var(--ink-2);box-shadow:var(--shadow-sm);}
-.cs-mod__dot{width:7px;height:7px;border-radius:50%;flex:none;animation:cs-dot 3.2s ease-in-out infinite;}
-.cs-mod:nth-child(1) .cs-mod__dot{background:var(--cccn-red);animation-delay:0s;}
-.cs-mod:nth-child(2) .cs-mod__dot{background:var(--acc-orange);animation-delay:.4s;}
-.cs-mod:nth-child(3) .cs-mod__dot{background:var(--acc-cyan);animation-delay:.8s;}
-.cs-mod:nth-child(4) .cs-mod__dot{background:var(--acc-olive);animation-delay:1.2s;}
-@keyframes cs-dot{0%,100%{opacity:.4;transform:scale(.8);}50%{opacity:1;transform:scale(1);}}
+  font-size:13px;font-weight:600;letter-spacing:.01em;color:var(--ink-2);box-shadow:var(--shadow-sm);}
 
 /* ---------- Entrada escalonada ---------- */
 @keyframes cs-rise{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
 .cs-logo-wrap,.cs-word-wrap,.cs-rule,.cs-mods li{
-  animation:cs-rise .9s cubic-bezier(.22,.61,.36,1) both;}
+  animation:cs-rise 1s cubic-bezier(.22,.61,.36,1) both;}
 .cs-logo-wrap{animation-delay:.06s;}
-.cs-word-wrap{animation-delay:.22s;}
-.cs-rule{animation-delay:.46s;}
-.cs-mods li:nth-child(1){animation-delay:.58s;}
-.cs-mods li:nth-child(2){animation-delay:.65s;}
-.cs-mods li:nth-child(3){animation-delay:.72s;}
-.cs-mods li:nth-child(4){animation-delay:.79s;}
+.cs-word-wrap{animation-delay:.24s;}
+.cs-rule{animation-delay:.5s;}
+.cs-mods li:nth-child(1){animation-delay:.62s;}
+.cs-mods li:nth-child(2){animation-delay:.69s;}
+.cs-mods li:nth-child(3){animation-delay:.76s;}
+.cs-mods li:nth-child(4){animation-delay:.83s;}
 
-/* ---------- Footer compacto (una sola fila, sin listas) ---------- */
-.site-footer.cs-footer{padding:clamp(24px,4vh,40px) 0 18px;}
-.site-footer__grid.cs-footer-grid{grid-template-columns:1fr auto;
-  gap:clamp(18px,4vw,48px);align-items:center;}
-.cs-footer .cs-footer__brand img{height:42px;margin-bottom:10px;}
-.cs-footer__note{margin:0;color:#93A2C0;max-width:52ch;line-height:1.5;}
-.cs-footer__note strong{color:#fff;font-weight:600;}
-.cs-footer__cta{display:inline-flex;align-items:center;gap:9px;padding:12px 22px;border-radius:999px;
-  border:1px solid rgba(255,255,255,.28);color:#fff;font-weight:600;font-size:14px;white-space:nowrap;
-  transition:background .18s ease,border-color .18s ease,transform .18s ease;}
-.cs-footer .cs-footer__cta:hover{background:rgba(255,255,255,.10);border-color:#fff;
-  transform:translateY(-1px);color:#fff;}
-.cs-footer .site-footer__bottom{margin-top:clamp(16px,3vh,26px);padding-top:14px;}
+/* ---------- Footer compacto (solo marca + línea legal) ---------- */
+.site-footer.cs-footer{padding:clamp(22px,3.6vh,36px) 0 16px;}
+.site-footer__grid.cs-footer-grid{grid-template-columns:1fr;gap:0;}
+.cs-footer .cs-footer__brand img{height:40px;margin-bottom:10px;}
+/* sin tope de medida: es una sola línea legal, y a 62ch se partía en dos sin necesidad */
+.cs-footer__note{margin:0;color:#93A2C0;line-height:1.5;}
+.cs-footer .site-footer__bottom{margin-top:clamp(14px,2.6vh,22px);padding-top:14px;}
 
 /* ---------- Movimiento reducido ---------- */
 @media (prefers-reduced-motion:reduce){
-  .cs-aura,.cs-word-wrap::before,.cs-lock em,.cs-spark,.cs-mod__dot,
+  .cs-aura,.cs-word-wrap::before,.cs-lock em,.cs-stars i,
   .cs-logo-wrap,.cs-word-wrap,.cs-rule,.cs-mods li{animation:none !important;}
-  .cs-spark{opacity:.75;transform:scale(1) rotate(45deg);}
+  .cs-stars i{opacity:.7;transform:scale(1) rotate(45deg);}
   .cs-logo-wrap img{transition:none;}
 }
 
 /* ---------- Responsivo ---------- */
-@media (max-width:860px){
-  .site-footer__grid.cs-footer-grid{grid-template-columns:1fr;justify-items:start;}
-}
 @media (max-width:560px){
   /* los filetes le roban ~50px al tagline y lo hacen desbordar en pantallas de 320px */
   .cs-rule::before,.cs-rule::after{display:none;}
 }
+@media (max-width:900px){
+  /* las 5 de acento enmarcan el wordmark solo en pantallas anchas; más abajo de 900px el
+     bloque de texto se ensancha en proporción y le caen encima al tagline. */
+  .cs-stars i.acc{display:none;}
+}
 @media (max-width:640px){
-  .cs-frame{padding-bottom:clamp(32px,6vh,60px);}
-  .cs-spark--7,.cs-spark--8{display:none;}
   .cs-mod{font-size:12px;padding:7px 13px;}
+  /* en pantallas angostas el texto ocupa casi todo el ancho: dejo solo las estrellas de
+     las bandas superior e inferior para que no queden encima de las palabras. */
+  .cs-stars i.side{display:none;}
 }
