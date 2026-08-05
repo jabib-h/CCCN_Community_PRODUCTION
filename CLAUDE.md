@@ -12,7 +12,14 @@ acá "por si acaso": si un módulo no está promovido todavía, no pertenece a e
   `<style>`/`<script>` embebido. Color o posición dinámica → CSSOM desde `.js`
   (`el.style.propiedad = ...`), nunca por atributo en el HTML.
 - **Sin `font-src` externo, sin CDN.** La tipografía vive autoalojada en
-  `web/shared/ds/assets/fonts/`. No enlaces Google Fonts ni ninguna librería por CDN.
+  `web/shared/ds/assets/fonts/` (Raleway + Fraunces itálica). No enlaces Google Fonts ni
+  ninguna librería por CDN. `Fraunces-OFL.txt` acompaña al `.woff2` por licencia (OFL 1.1).
+- **`script-src 'none'`**: hoy la landing no tiene JS. Si agregás JS, abrí la directiva en
+  `staticwebapp.config.json` en el mismo cambio o la página se rompe en silencio.
+- **El wordmark "Community" es una sola palabra y no puede reflowear.** Su `font-size`
+  tiene que seguir escalando con `vw` hasta el mínimo (medido: la palabra ocupa 5.31× el
+  font-size); subir ese mínimo la desborda en pantallas de 320px. Verificalo antes de
+  tocarlo, no lo ajustes a ojo.
 - `web/shared/ds/` es la ÚNICA copia del design system (tokens, tipografía, componentes).
   No dupliques colores, logos ni fuentes en otra carpeta — si falta algo, se agrega ahí.
 - Español en todo el contenido, salvo acentos de marca cortos y deliberados ya existentes
@@ -30,7 +37,20 @@ acá "por si acaso": si un módulo no está promovido todavía, no pertenece a e
 
 ## Verificación
 
-No hay build ni pruebas automatizadas todavía (sitio estático). Antes de un cambio,
-abrir `web/index.html` con un servidor local (ver `README.md`) y confirmar visualmente
-que el logo enlaza al sitio oficial, que el wordmark anima, y que la consola del
-navegador no muestra errores de CSP.
+No hay build ni pruebas automatizadas todavía (sitio estático). Antes de un cambio, servir
+`web/` en local (ver `README.md`) y confirmar que el logo enlaza al sitio oficial, que el
+wordmark carga en Fraunces (no en un serif de respaldo) y que la consola no muestra
+errores de CSP.
+
+Para revisar el diseño de verdad, renderizalo — no lo des por bueno leyendo el CSS:
+
+```bash
+chrome --headless=new --disable-gpu --hide-scrollbars \
+  --virtual-time-budget=7000 --window-size=1440,900 \
+  --screenshot=out.png http://localhost:8080/
+```
+
+Ojo: headless no baja de ~504px de ancho de viewport, así que para probar teléfonos hay
+que cargar la página dentro de un `<iframe width="320">` en una página de prueba temporal
+(los `vw` resuelven contra el ancho del iframe) y comparar `scrollWidth` con
+`clientWidth`. Así se detectó el desborde del wordmark en 320px.

@@ -44,7 +44,12 @@ Abrir `http://localhost:8080/`.
   `staticwebapp.config.json` no tiene `unsafe-inline`. Si necesitás algo dinámico, hacelo
   por CSSOM desde `.js` (`elemento.style.propiedad = ...`), nunca por atributo en el HTML.
 - **Sin Google Fonts ni CDN.** La tipografía está autoalojada en
-  `web/shared/ds/assets/fonts/`; la CSP no permite `font-src` externo.
+  `web/shared/ds/assets/fonts/`; la CSP no permite `font-src` externo. Son dos: Raleway
+  (texto) y Fraunces itálica (solo el wordmark, vía el tratamiento `.real-tag`). Fraunces
+  es SIL OFL 1.1 y su licencia viaja al lado del archivo (`Fraunces-OFL.txt`) — no la
+  borres, es requisito de la licencia para redistribuirla.
+- **No hay JavaScript** y la CSP lo bloquea (`script-src 'none'`). Si algún día hace falta
+  JS, hay que abrir esa directiva en `staticwebapp.config.json` en el mismo cambio.
 - `web/shared/ds/` es la única copia del design system — no dupliques tokens, logos ni
   tipografías en otra carpeta.
 - Contenido en español (excepción: acentos de marca cortos y deliberados, como el tagline

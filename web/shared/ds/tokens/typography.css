@@ -1,4 +1,8 @@
 @font-face{font-family:"Raleway";src:url("../assets/fonts/Raleway-VariableFont_wght.ttf") format("truetype-variations");font-weight:100 900;font-style:normal;font-display:swap;}
+/* Fraunces itálica — la usa SOLO el tratamiento .real-tag (ver brand/motifs.css). Va
+   autoalojada porque la CSP no permite font-src externo. SIL OFL 1.1: la licencia viaja
+   junto al archivo en ../assets/fonts/Fraunces-OFL.txt (requisito de la licencia). */
+@font-face{font-family:"Fraunces";src:url("../assets/fonts/Fraunces-Italic-VariableFont.woff2") format("woff2-variations");font-weight:600 700;font-style:italic;font-display:swap;}
 :root{--font-display:"Fraunces","Times New Roman",Georgia,serif;--font-sans:"Raleway",Arial,system-ui,sans-serif;--font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,monospace;}
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}

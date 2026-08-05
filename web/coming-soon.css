@@ -1,63 +1,163 @@
-/* Coming soon — marca fija (logo + wordmark "Community") en un solo cuadro sin scroll.
-   Sin dependencias externas, sin inline style (CSP: style-src 'self'). Todo el movimiento
-   es CSS puro; no hay JS en esta página. El footer vive fuera de este cuadro, más abajo
-   en el flujo normal. */
+/* Coming soon — página de espera de community.centrocultural.cr.
+   El foco visual es el lockup de marca (eyebrow "Próximamente" + wordmark "Community")
+   usando el tratamiento .real-tag del design system, que es el único lugar donde la
+   marca usa Fraunces. Todo el movimiento es CSS puro: no hay JS en esta página y la CSP
+   tiene script-src 'none'. Nada de style="" inline (style-src 'self', ver CLAUDE.md). */
 
-/* ---------- Cuadro único (logo arriba + wordmark, sin scroll) ---------- */
-.cs-frame{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;justify-content:flex-start;
-  padding:clamp(48px,10vh,110px) 0 clamp(24px,4vh,48px);
-  background:radial-gradient(ellipse 90% 70% at 50% 0%,var(--cccn-blue-100) 0%,var(--bg) 72%);}
+/* ---------- Página: cabecera de bandera + cuadro + footer, exactamente una pantalla --- */
+.cs-body{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;background:var(--bg);}
+.cs-strip{flex:none;height:5px;}
+
+.cs-frame{position:relative;flex:1;display:flex;flex-direction:column;justify-content:center;
+  overflow:hidden;isolation:isolate;
+  /* más aire abajo que arriba: sube el bloque por encima del centro óptico */
+  padding:clamp(24px,4.5vh,56px) 0 clamp(34px,6.5vh,76px);
+  background:radial-gradient(ellipse 120% 78% at 50% -10%,var(--cccn-blue-100) 0%,rgba(232,235,246,0) 62%),var(--bg);}
 .cs-frame__inner{display:flex;flex-direction:column;align-items:center;text-align:center;
-  gap:clamp(14px,2.4vh,26px);}
+  gap:clamp(12px,2.2vh,24px);}
 
-.cs-logo-wrap{display:inline-block;width:clamp(160px,22vw,300px);margin:0;transition:transform .15s ease;}
-.cs-logo-wrap:hover,.cs-logo-wrap:focus-visible{transform:translateY(-2px);}
-.cs-logo-wrap img{width:100%;height:auto;filter:drop-shadow(0 16px 30px rgba(4,26,113,.18));}
+/* Textura de puntos: visible solo hacia los bordes (la máscara la apaga en el centro,
+   donde va el texto, para no restarle legibilidad al wordmark). */
+.cs-frame::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background-image:radial-gradient(var(--line-strong) 1px,transparent 1px);background-size:26px 26px;
+  opacity:.45;
+  -webkit-mask-image:radial-gradient(ellipse 64% 58% at 50% 46%,transparent 28%,#000 100%);
+  mask-image:radial-gradient(ellipse 64% 58% at 50% 46%,transparent 28%,#000 100%);}
 
-/* ---------- Wordmark "Community" con brillo y chispas sutiles ---------- */
-.cs-word-wrap{position:relative;display:inline-block;margin-top:clamp(6px,1vh,14px);
-  padding:clamp(14px,3vh,28px) clamp(24px,7vw,72px);}
-.cs-word-wrap::before{content:"";position:absolute;inset:-25% -8%;z-index:0;
-  background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(45,71,157,.24) 0%,rgba(45,71,157,0) 70%);
-  filter:blur(6px);animation:cs-glow-pulse 5s ease-in-out infinite;}
-.cs-word{position:relative;z-index:1;margin:0;font-family:var(--font-display);font-style:italic;font-weight:600;
-  font-size:clamp(46px,10vw,116px);line-height:.95;letter-spacing:-.01em;color:var(--cccn-blue-900);
-  animation:cs-word-glow 5s ease-in-out infinite;}
+/* Manchas de color desenfocadas que derivan muy lento: dan profundidad sin ruido. */
+.cs-aura{position:absolute;z-index:-1;border-radius:50%;filter:blur(70px);pointer-events:none;}
+.cs-aura--blue{width:min(46vw,560px);aspect-ratio:1;left:-9vw;top:-8vh;
+  background:rgba(45,71,157,.20);animation:cs-drift-a 26s ease-in-out infinite;}
+.cs-aura--red{width:min(38vw,460px);aspect-ratio:1;right:-7vw;bottom:-10vh;
+  background:rgba(238,48,78,.13);animation:cs-drift-b 33s ease-in-out infinite;}
+@keyframes cs-drift-a{0%,100%{transform:translate3d(0,0,0) scale(1);}50%{transform:translate3d(6vw,4vh,0) scale(1.12);}}
+@keyframes cs-drift-b{0%,100%{transform:translate3d(0,0,0) scale(1);}50%{transform:translate3d(-5vw,-5vh,0) scale(1.1);}}
 
-.cs-spark{position:absolute;z-index:1;background:var(--cccn-blue-700);
-  clip-path:polygon(50% 0%,63% 38%,100% 50%,63% 62%,50% 100%,37% 62%,0% 50%,37% 38%);
-  animation:cs-spark-twinkle 3.2s ease-in-out infinite;}
-.cs-spark--1{top:8%;left:0%;width:11px;height:11px;background:var(--acc-orange);animation-delay:0s;}
-.cs-spark--2{top:74%;left:5%;width:7px;height:7px;background:var(--cccn-red);animation-delay:.6s;}
-.cs-spark--3{top:2%;right:9%;width:8px;height:8px;background:var(--acc-cyan);animation-delay:1.1s;}
-.cs-spark--4{bottom:6%;right:1%;width:10px;height:10px;background:var(--cccn-blue-700);animation-delay:1.7s;}
-.cs-spark--5{top:42%;left:-3%;width:6px;height:6px;background:#fff;box-shadow:0 0 8px rgba(45,71,157,.55);animation-delay:2.2s;}
-.cs-spark--6{top:46%;right:-3%;width:6px;height:6px;background:#fff;box-shadow:0 0 8px rgba(238,48,78,.45);animation-delay:2.8s;}
+/* ---------- Logo (enlaza al sitio oficial) ---------- */
+.cs-logo-wrap{display:inline-block;width:clamp(148px,18vw,262px);}
+.cs-logo-wrap img{width:100%;height:auto;filter:drop-shadow(0 18px 34px rgba(4,26,113,.16));
+  transition:transform .25s cubic-bezier(.22,.61,.36,1);}
+.cs-logo-wrap:hover img,.cs-logo-wrap:focus-visible img{transform:translateY(-3px) scale(1.02);}
 
-@keyframes cs-glow-pulse{0%,100%{opacity:.5;transform:scale(1);}50%{opacity:1;transform:scale(1.06);}}
-@keyframes cs-word-glow{
-  0%,100%{text-shadow:0 0 18px rgba(45,71,157,.16);}
-  50%{text-shadow:0 0 36px rgba(45,71,157,.36),0 0 64px rgba(238,48,78,.10);}
+/* ---------- Lockup: "Próximamente" + "Community" ---------- */
+.cs-word-wrap{position:relative;display:inline-flex;justify-content:center;max-width:100%;
+  padding:clamp(14px,3.2vh,32px) clamp(16px,8vw,84px);}
+/* halo detrás del wordmark */
+.cs-word-wrap::before{content:"";position:absolute;inset:-16% -6%;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 58% 56% at 50% 52%,rgba(45,71,157,.22) 0%,rgba(45,71,157,0) 70%);
+  filter:blur(10px);animation:cs-glow 6s ease-in-out infinite;}
+@keyframes cs-glow{0%,100%{opacity:.5;transform:scale(1);}50%{opacity:1;transform:scale(1.07);}}
+
+/* margin:0 — el h1 trae margen del navegador y el design system solo resetea html/body */
+.cs-lock{position:relative;z-index:1;margin:0;font-size:clamp(11px,1.4vw,19px);}
+/* el letter-spacing deja aire sobrante a la derecha; el margen negativo lo descuenta
+   para que la línea quede realmente centrada bajo el wordmark. */
+.cs-lock>span:first-child{letter-spacing:.3em;margin-right:-.3em;color:var(--cccn-red);}
+/* "Community" es una sola palabra: no puede reflowear, así que su ancho DEBE escalar con
+   el viewport hasta abajo. Medido: la palabra ocupa 5.31 × el font-size. Con 12.5vw y un
+   mínimo de 34px, a 320px de ancho da 213px + 51px de padding = 264px, dentro de los
+   288px útiles del contenedor. Subir el mínimo la vuelve a desbordar en pantallas chicas. */
+.cs-lock em{font-size:clamp(34px,12.5vw,138px);line-height:.9;color:var(--cccn-blue-900);}
+
+/* Brillo que recorre el wordmark. El color base se declara antes: si el navegador no
+   soporta background-clip:text, el texto igual se ve (solo se pierde el brillo).
+   background-size:200% + posiciones entre 100% y 0% es la única combinación que mantiene
+   la caja SIEMPRE cubierta por el degradado; con 300% y posiciones fuera de [0,100%] el
+   fondo deja de tapar parte del texto y esas letras desaparecen (quedan transparentes). */
+@supports (background-clip:text) or (-webkit-background-clip:text){
+  .cs-lock em{
+    background-image:linear-gradient(96deg,
+      var(--cccn-blue-900) 0%,var(--cccn-blue-900) 44%,
+      var(--cccn-blue-700) 49%,var(--cccn-blue-700) 51%,
+      var(--cccn-blue-900) 56%,var(--cccn-blue-900) 100%);
+    background-size:200% 100%;background-position:100% 0;background-repeat:no-repeat;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:cs-shimmer 7.5s ease-in-out infinite;}
 }
-@keyframes cs-spark-twinkle{
-  0%,100%{opacity:0;transform:scale(.4) rotate(0deg);}
-  50%{opacity:1;transform:scale(1) rotate(45deg);}
+@keyframes cs-shimmer{0%,18%{background-position:100% 0;}66%,100%{background-position:0% 0;}}
+
+/* ---------- Destellos alrededor del wordmark ---------- */
+.cs-spark{position:absolute;z-index:1;pointer-events:none;
+  clip-path:polygon(50% 0%,63% 37%,100% 50%,63% 63%,50% 100%,37% 63%,0% 50%,37% 37%);
+  filter:drop-shadow(0 0 5px rgba(45,71,157,.30));
+  animation:cs-twinkle 3.4s ease-in-out infinite;}
+.cs-spark--1{top:5%;left:0;width:16px;height:16px;background:var(--acc-orange);animation-delay:1.2s;}
+.cs-spark--2{top:71%;left:5%;width:10px;height:10px;background:var(--cccn-red);animation-delay:2.7s;}
+.cs-spark--3{top:-2%;right:10%;width:13px;height:13px;background:var(--acc-cyan);animation-delay:2.1s;}
+.cs-spark--4{bottom:2%;right:1%;width:15px;height:15px;background:var(--cccn-blue-700);animation-delay:3.6s;}
+.cs-spark--5{top:38%;left:-2%;width:9px;height:9px;background:var(--cccn-blue-500);animation-delay:4.4s;}
+.cs-spark--6{top:47%;right:-2%;width:9px;height:9px;background:var(--cccn-red);animation-delay:1.7s;}
+.cs-spark--7{top:12%;right:25%;width:8px;height:8px;background:var(--acc-purple);animation-delay:3.1s;}
+.cs-spark--8{bottom:10%;left:23%;width:8px;height:8px;background:var(--acc-olive);animation-delay:4.9s;}
+/* meseta larga en el medio: así siempre hay varios destellos encendidos a la vez y no
+   una sola chispa suelta parpadeando (los delays desfasados hacen el resto). */
+@keyframes cs-twinkle{
+  0%,100%{opacity:0;transform:scale(.3) rotate(0deg);}
+  30%,62%{opacity:1;transform:scale(1) rotate(45deg);}
 }
 
-.cs-hero__tag{font-family:var(--font-display);font-style:italic;font-weight:600;
-  font-size:clamp(14px,1.5vw,18px);color:var(--cccn-red);margin:0;}
+/* ---------- Tagline (regla con filetes del design system) ---------- */
+.cs-rule{margin:0;color:var(--muted);font-size:clamp(11px,1.1vw,13px);}
+.cs-rule::before,.cs-rule::after{width:clamp(20px,5vw,52px);}
 
-/* ---------- Footer mínimo (landing sin módulos aún) ---------- */
-.cs-footer-grid{grid-template-columns:1.3fr 1fr 1.2fr;}
-@media (max-width:520px){.cs-footer-grid{grid-template-columns:1fr;}}
+/* ---------- Qué trae Community ---------- */
+.cs-mods{list-style:none;margin:clamp(4px,1.4vh,14px) 0 0;padding:0;
+  display:flex;flex-wrap:wrap;justify-content:center;gap:9px clamp(8px,1.1vw,13px);}
+.cs-mod{display:inline-flex;align-items:center;gap:9px;padding:8px 16px;border-radius:999px;
+  border:1px solid var(--line);background:rgba(255,255,255,.72);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  font-size:13px;font-weight:600;color:var(--ink-2);box-shadow:var(--shadow-sm);}
+.cs-mod__dot{width:7px;height:7px;border-radius:50%;flex:none;animation:cs-dot 3.2s ease-in-out infinite;}
+.cs-mod:nth-child(1) .cs-mod__dot{background:var(--cccn-red);animation-delay:0s;}
+.cs-mod:nth-child(2) .cs-mod__dot{background:var(--acc-orange);animation-delay:.4s;}
+.cs-mod:nth-child(3) .cs-mod__dot{background:var(--acc-cyan);animation-delay:.8s;}
+.cs-mod:nth-child(4) .cs-mod__dot{background:var(--acc-olive);animation-delay:1.2s;}
+@keyframes cs-dot{0%,100%{opacity:.4;transform:scale(.8);}50%{opacity:1;transform:scale(1);}}
+
+/* ---------- Entrada escalonada ---------- */
+@keyframes cs-rise{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.cs-logo-wrap,.cs-word-wrap,.cs-rule,.cs-mods li{
+  animation:cs-rise .9s cubic-bezier(.22,.61,.36,1) both;}
+.cs-logo-wrap{animation-delay:.06s;}
+.cs-word-wrap{animation-delay:.22s;}
+.cs-rule{animation-delay:.46s;}
+.cs-mods li:nth-child(1){animation-delay:.58s;}
+.cs-mods li:nth-child(2){animation-delay:.65s;}
+.cs-mods li:nth-child(3){animation-delay:.72s;}
+.cs-mods li:nth-child(4){animation-delay:.79s;}
+
+/* ---------- Footer compacto (una sola fila, sin listas) ---------- */
+.site-footer.cs-footer{padding:clamp(24px,4vh,40px) 0 18px;}
+.site-footer__grid.cs-footer-grid{grid-template-columns:1fr auto;
+  gap:clamp(18px,4vw,48px);align-items:center;}
+.cs-footer .cs-footer__brand img{height:42px;margin-bottom:10px;}
+.cs-footer__note{margin:0;color:#93A2C0;max-width:52ch;line-height:1.5;}
+.cs-footer__note strong{color:#fff;font-weight:600;}
+.cs-footer__cta{display:inline-flex;align-items:center;gap:9px;padding:12px 22px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.28);color:#fff;font-weight:600;font-size:14px;white-space:nowrap;
+  transition:background .18s ease,border-color .18s ease,transform .18s ease;}
+.cs-footer .cs-footer__cta:hover{background:rgba(255,255,255,.10);border-color:#fff;
+  transform:translateY(-1px);color:#fff;}
+.cs-footer .site-footer__bottom{margin-top:clamp(16px,3vh,26px);padding-top:14px;}
 
 /* ---------- Movimiento reducido ---------- */
 @media (prefers-reduced-motion:reduce){
-  .cs-word-wrap::before,.cs-word,.cs-spark,.cs-logo-wrap{animation:none !important;}
-  .cs-spark{opacity:.7;}
+  .cs-aura,.cs-word-wrap::before,.cs-lock em,.cs-spark,.cs-mod__dot,
+  .cs-logo-wrap,.cs-word-wrap,.cs-rule,.cs-mods li{animation:none !important;}
+  .cs-spark{opacity:.75;transform:scale(1) rotate(45deg);}
+  .cs-logo-wrap img{transition:none;}
 }
 
 /* ---------- Responsivo ---------- */
+@media (max-width:860px){
+  .site-footer__grid.cs-footer-grid{grid-template-columns:1fr;justify-items:start;}
+}
+@media (max-width:560px){
+  /* los filetes le roban ~50px al tagline y lo hacen desbordar en pantallas de 320px */
+  .cs-rule::before,.cs-rule::after{display:none;}
+}
 @media (max-width:640px){
-  .cs-frame{padding-top:clamp(32px,8vh,64px);}
+  .cs-frame{padding-bottom:clamp(32px,6vh,60px);}
+  .cs-spark--7,.cs-spark--8{display:none;}
+  .cs-mod{font-size:12px;padding:7px 13px;}
 }
